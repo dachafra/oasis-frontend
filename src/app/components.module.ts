@@ -1,6 +1,7 @@
 /* Components */
 import { AppComponent } from './components/app.component';
 import { StationList } from './components/search/stationList.component';
+import { CompanyList } from './components/search/companyList.component';
 import { ConnectionQuery } from './components/search/connectionQuery.component';
 import { TravelTime } from './components/search/travelTime.component';
 import { TravelDay } from './components/search/travelDay.component';
@@ -24,6 +25,7 @@ export class Components {
         TravelTime,
         TravelDay,
         Routes,
+        CompanyList,
         Options,
         LanguageChooser,
         NavComponent,

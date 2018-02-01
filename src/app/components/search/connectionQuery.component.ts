@@ -13,6 +13,7 @@ import { Recents } from './recents.component';
 import { AppModule } from '../../app.module';
 import { Recent } from '../../classes/userData/recent';
 import { ServerConfig } from '../../classes/utils/serverConfig';
+import { CompanyList} from './companyList.component';
 
 @Component({
     selector: 'connectionquery',
@@ -26,6 +27,7 @@ import { ServerConfig } from '../../classes/utils/serverConfig';
 export class ConnectionQuery {
     @ViewChild('departure') depStation: StationList;
     @ViewChild('arrival') arrStation: StationList;
+    @ViewChild('company') company: CompanyList;
     @ViewChild(TravelTime) travelTime: TravelTime;
     @ViewChild(TravelDay) travelDate: TravelDay;
     @ViewChild(Recents) recents: Recents;
@@ -33,8 +35,8 @@ export class ConnectionQuery {
     searchData: SearchData[];
     error: string;
     language: Language = new Language();
-    company: string;
     transportType: string;
+    companyType: string;
 
     constructor() {}
 
@@ -85,22 +87,37 @@ export class ConnectionQuery {
      */
     stationSelected(selected, nr) {
         if (selected && selected['company'] && selected['type']) {
-            this.company = selected['company'];
+            this.companyType = selected['company'];
             this.transportType = selected['type'];
         }
         const arriveSt = this.arrStation.selectedStation;
         const departSt = this.depStation.selectedStation;
         if (!arriveSt && !departSt) {
-            this.company = null;
+            this.companyType = null;
             this.transportType = null;
         }
+    }
+
+    companySelected(selected){
+        if(selected){
+            this.depStation.stationCtrl.enable();
+            this.arrStation.stationCtrl.enable();
+        }
+        else {
+            this.depStation.clear();
+            this.arrStation.clear();
+        }
+
+
     }
 
     /**
      * Request parent component to focus the next field
      */
     focusNext(evt) {
-        if (evt === 'depature') {
+        if(evt === 'company'){
+            this.depStation.focus();
+        } else if (evt === 'departure') {
             this.arrStation.focus();
         } else if (evt === 'arrival') {
             this.travelTime.focus();

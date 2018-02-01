@@ -4,25 +4,34 @@
         "deleteInterval": 0
     },
     "stationUris": {
-        "irail.be/stations/NMBS/": "belgium_sncb",
-        "madrid.linkedconnections.org/crtm/stops/": "madrid_crtm",
-        "belgium.linkedconnections.org/delijn/stops/": "belgium_delijn"
+        "madrid.linkedconnections.org/train/stops/":"madrid_train",
+        "madrid.linkedconnections.org/tram/stops/":"madrid_tram",
+        "barcelona.linkedconnections.org/tbs/stops/":"barcelona_tbs",
+        "barcelona.linkedconnections.org/tbx/stops/":"barcelona_tbx",
+        "caceres.linkedconnections.org/bus/stops/":"caceres_bus"
     },
     "entrypoints": {
-        "belgium_sncb": {
-            "uri": "http://belgium.linkedconnections.org/sncb/connections"
+        "madrid_train":{
+            "uri": "http://tripscore.lab.oeg-upm.net/madrid/train/connections"
         },
-        "belgium_delijn": {
-            "uri": "http://belgium.linkedconnections.org/delijn/connections"
+        "madrid_tram":{
+            "uri": "http://tripscore.lab.oeg-upm.net/madrid/tram/connections"
         },
-        "madrid_crtm": {
-            "uri": "http://madrid.linkedconnections.org/crtm/connections"
+        "barcelona_tbs":{
+            "uri": "http://tripscore.lab.oeg-upm.net/barcelona/tram/tbs/connections"
+        },
+        "barcelona_tbx":{
+            "uri": "http://tripscore.lab.oeg-upm.net/barcelona/tram/tbx/connections"
+        },
+        "caceres_bus":{
+            "uri": "http://tripscore.lab.oeg-upm.net/caceres/bus/connections"
         }
+
     },
     "servers": {
         "tripscoreAPI": {
             "name": "stationsserver",
-            "uri": "https://api.tripscore.eu"
+            "uri": "http://tripscore.lab.oeg-upm.net/api"
         }
     }
 }

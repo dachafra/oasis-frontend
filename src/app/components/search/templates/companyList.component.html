@@ -1,0 +1,13 @@
+<md-input-container class="companyList">
+  <input class="browser-default" mdInput [mdAutocomplete]="auto" [formControl]="companyCtrl" >
+</md-input-container>
+
+<md-autocomplete #auto="mdAutocomplete" >
+  <md-option *ngFor="let company of qresults"
+             [value]="company.name"
+             (onselect)="filterCompanies(company.name);requestFocusNext()">
+      {{ company.name }}
+      <img src='{{ imgstart + company.id + ".png" }}' class="line-end-img"/>
+  </md-option>
+</md-autocomplete>
+

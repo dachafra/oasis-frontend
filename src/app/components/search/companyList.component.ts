@@ -7,37 +7,30 @@ import 'rxjs/add/operator/map';
 
 // Custom modules
 import { TripscoreService } from '../../services/tripscore.service';
-import {CompanyList} from './companyList.component';
 
-@Component({
-    selector: 'stationlist',
-    templateUrl: './templates/stationList.component.html',
-    styleUrls: ['./styles/stationList.component.scss']
+@Component ({
+    selector: 'companylist',
+    templateUrl: './templates/companyList.component.html',
+    styleUrls: ['./styles/companyList.component.scss']
 })
 
 /**
  * A form input field with autocomplete for stations
  */
-export class StationList implements OnInit {
-    selectedStation = null;
-    stationCtrl: FormControl;
+export class CompanyList implements OnInit {
+    selectedCompany = null;
+    companyCtrl: FormControl;
     inputValue: string;
     tripscoreService: TripscoreService;
     qresults: any[];
-    stations: any[];
+    companies: any[];
     lastQuery: string;
+    flag: boolean;
     imgstart = 'assets/img/';
-    transportTypes = [{ type: 'bus', icon: 'directions_bus' },
-    { type: 'emt-bus', icon: 'location_city' },
-    { type: 'metro', icon: 'subway' },
-    { type: 'tram', icon: 'tram' },
-    { type: 'train', icon: 'train' }]
+
     @ViewChild(MdInputContainer) mdInput: MdInputContainer;
     @Output() notifyParent: EventEmitter<any> = new EventEmitter();
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
-    @Input() type: string;
-    @Input() companyType: string;
-    @Input() company: CompanyList;
 
     /**
      * Constructor, load in all stations
@@ -45,36 +38,33 @@ export class StationList implements OnInit {
      */
     constructor(tripscoreService: TripscoreService) {
         this.tripscoreService = tripscoreService;
-        this.stationCtrl = new FormControl();
-        this.stationCtrl.valueChanges.subscribe((val) => {
-           if(val)
-            this.querystations(val);
+        this.companyCtrl = new FormControl();
+        this.flag=true;
+        this.companyCtrl.valueChanges.subscribe((val) => {
+            this.querycompanies(val);
         });
     }
 
     /**
      * Component initialised
      */
-    ngOnInit() {
-        this.stationCtrl.disable();
-    }
+    ngOnInit() { }
 
     /**
      * filter stations on value change
      * @param val the value to filter on
      */
-    filterStations(val: string) {
+    filterCompanies(val: string) {
         this.inputValue = val;
         if (val) {
-            const filtered = this.stations.filter(s => s.standardname.toLowerCase().indexOf(val.toLowerCase()) >= 0);
-            if (filtered.length > 0 &&
-                filtered[0].standardname.toLowerCase().indexOf(val.toLowerCase()) === 0) {
-                this.selectedStation = filtered[0];
-                if (this.selectedStation) {
-                    // Emit that station has been selected, for station combining depart and arrival and company/type lock
-                    this.valueChange.emit(this.selectedStation);
-                }
+            const filtered = this.companies.filter(s => s.name.toLowerCase().indexOf(val.toLowerCase()) >= 0);
+            if (filtered.length > 0 && filtered[0].name.toLowerCase()===val.toLowerCase()) {
+                this.selectedCompany = filtered[0];
             }
+            else {
+                this.selectedCompany=null;
+            }
+            this.valueChange.emit(this.selectedCompany);
             this.qresults = filtered;
             return filtered;
         }
@@ -85,46 +75,35 @@ export class StationList implements OnInit {
      * This function queries the tripscore API for stations
      * @param val the search query (station name)
      */
-    querystations(val: string) {
+    querycompanies(val: string) {
         this.inputValue = val;
 
-        if (val === '') {
-            // Clears selected station and emits the valueChange event for type & company lock
-            this.selectedStation = null;
-            this.valueChange.emit(this.selectedStation);
+        if(this.selectedCompany){
+            this.selectedCompany=null;
+            this.valueChange.emit(this.selectedCompany);
         }
 
         if (this.qresults) {
             this.qresults.forEach(res => {
-                if (res.standardname === val) {
+                if (res.name === val) {
                     this.lastQuery = val;
                 }
             });
         }
-
         if (this.lastQuery && val.toLowerCase().indexOf(this.lastQuery.toLowerCase()) === 0) {
             // We already queried using this filter
             // Filter this locally.
-            return this.filterStations(val);
+            return this.filterCompanies(val);
         }
 
-        this.tripscoreService.queryStations(val, this.company.selectedCompany.id, null).then((res) => {
-            this.qresults = res.stations;
-            this.stations = this.qresults;
+        this.tripscoreService.queryCompanies(val).then((res) => {
+            this.qresults = res.companies;
+            this.companies = this.qresults;
             // If there is a next page keep getting results from server
             if (!res.nextPage) {
                 this.lastQuery = val;
             }
         });
-    }
-
-
-    clear(){
-        this.selectedStation=null;
-        this.stationCtrl.reset();
-        this.stationCtrl.disable();
-        this.stations = [];
-        this.qresults = [];
     }
 
     /**

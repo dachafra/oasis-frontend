@@ -53,6 +53,26 @@ export class TripscoreService {
     }
 
     /**
+     * Gets an array of companies from the api
+     * @param query name string
+     */
+    public queryCompanies(query: string): Promise<any> {
+        const myParams = new URLSearchParams();
+        if (query) {
+            myParams.append('q', query);
+        }
+        const options = new RequestOptions({
+            headers: new Headers({ 'Accept': 'application/json' }),
+            responseType: ResponseContentType.Json,
+            params: myParams
+        });
+        return this.http.get(`${this.uri}/company`, options)
+            .toPromise()
+            .then((response) => response.json())
+            .catch(this.handleError);
+    }
+
+    /**
      * Queries the tripscore API for station details based on id
      * @param id the station id
      */
