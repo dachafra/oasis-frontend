@@ -1,5 +1,5 @@
 // Node modules
-import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectorRef, NgZone} from '@angular/core';
 import { ISimpleEvent } from 'strongly-typed-events';
 
 // Custom modules
@@ -9,10 +9,13 @@ import { Language } from '../../classes/userData/language';
 import { Manager } from '../../classes/connections/manager';
 import { QoE } from '../../classes/connections/qoe';
 import { ServerConfig } from '../../classes/utils/serverConfig';
+import {StationList} from '../search/stationList.component';
+import {Routes} from './routes.component';
 
 @Component({
     selector: 'route-screen',
     templateUrl: './templates/routeScreen.component.html',
+
     styleUrls: ['./styles/connections.component.scss']
 })
 
@@ -33,12 +36,13 @@ export class RouteScreen implements OnInit {
     searchString = AppComponent.searchString;
     @Input() pageChange: ISimpleEvent<number>;
 
+
     // Interactive loading
     dataCount = 0;
     httpRequests = 0;
     httpResponses = 0;
 
-    constructor(private cd: ChangeDetectorRef) {
+    constructor(private zone: NgZone) {
         if (AppComponent.searchData) {
             const searchQuery = AppComponent.searchData[0];
             if (ServerConfig.equalUris(searchQuery.depStation, searchQuery.arrStation)) {
@@ -46,12 +50,15 @@ export class RouteScreen implements OnInit {
                 this.manager = new Manager(entrypoint);
                 this.qoeList = this.manager.qoeList;
                 this.manager.getRouteListener.subscribe(() => {
+                    this.zone.run(() => {
+                        // something
+                    });
                     this.dataCount = this.manager.dataCount;
                     this.httpRequests = this.manager.httpRequests;
                     this.httpResponses = this.manager.httpResponses;
                     this.qoeList = this.manager.qoeList;
-                    this.cd.markForCheck();
-                    this.cd.detectChanges();
+                    // this.cd.markForCheck();
+                    // this.cd.detectChanges();
                     console.log('route found');
                 });
                 return;
